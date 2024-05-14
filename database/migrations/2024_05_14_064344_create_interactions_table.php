@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('caller_name');
             $table->string('caller_phone');
             $table->string('status');
-            $table->string('data');
+            $table->string('data')->nullable();
             $table->timestamps();
         });
     }
