@@ -68,7 +68,6 @@ class AuthController extends Controller
 
     public function saveInteraction(Request $request) {
         $validator = Validator::make($request->all(), [
-            'client_slug' => 'required|string',
             'name' => 'required|string',
             'phone' => 'required|string',
             'interaction_date' => 'required|string',
@@ -80,7 +79,7 @@ class AuthController extends Controller
             'status' => 'required|string',
             'data' => 'nullable|string',
         ]);
-
+    
         // Check if validation fails
         if ($validator->fails()) {
             return response()->json([
@@ -88,14 +87,18 @@ class AuthController extends Controller
                 'errors' => $validator->errors()
             ], 400);
         }
-
-        // Create new interaction record
-        $interaction = Interaction::create($request->all());
-
+    
+        // Create new interaction record with client_slug set to 'super'
+        $interactionData = $request->all();
+        $interactionData['client_slug'] = 'super';
+    
+        $interaction = Interaction::create($interactionData);
+    
         // Return success response
         return response()->json([
             'status' => 'success',
             'data' => $interaction
         ], 201);
     }
+    
 }
