@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str; 
 use App\Models\Interaction;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\User;
 
@@ -66,11 +67,11 @@ class AuthController extends Controller
     }
 
     public function saveInteraction(Request $request) {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'client_slug' => 'required|string',
             'name' => 'required|string',
             'phone' => 'required|string',
-            'interaction_date' => 'required|date',
+            'interaction_date' => 'required|string',
             'interaction_type' => 'required|string',
             'interaction_tag' => 'required|string',
             'duration' => 'required|string',
@@ -80,26 +81,21 @@ class AuthController extends Controller
             'data' => 'nullable|string',
         ]);
 
-        // Save the interaction data
-        $interaction = Interaction::create([
-            'client_slug' => $request->client_slug,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'interaction_date' => $request->interaction_date,
-            'interaction_type' => $request->interaction_type,
-            'interaction_tag' => $request->interaction_tag,
-            'duration' => $request->duration,
-            'caller_name' => $request->caller_name,
-            'caller_phone' => $request->caller_phone,
-            'status' => $request->status,
-            'data' => $request->data ? $request->data : null,
-        ]);
-
-        if ($interaction) {
-            return response()->json(['message' => 'Interaction saved successfully'], 200);
-        } else {
-            return response()->json(['error' => 'Failed to save interaction'], 500);
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 400);
         }
-    }
 
+        // Create new interaction record
+        $interaction = Interaction::create($request->all());
+
+        // Return success response
+        return response()->json([
+            'status' => 'success',
+            'data' => $interaction
+        ], 201);
+    }
 }

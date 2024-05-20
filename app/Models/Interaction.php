@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Interaction extends Model
 {
     use HasFactory;
-    protected $fillable = ['client_slug', 'name', 'phone', 'interaction_date', 'interaction_type', 'interaction_tag', 'duration', 'caller_name', 'caller_phone', 'status', 'data'];
+    
+    protected $fillable = [
+        'client_slug',
+        'name',
+        'phone',
+        'interaction_date',
+        'interaction_type',
+        'interaction_tag',
+        'duration',
+        'caller_name',
+        'caller_phone',
+        'status',
+        'data',
+    ];
 
 }
